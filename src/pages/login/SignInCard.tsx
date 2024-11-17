@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { Box, Button, CssBaseline, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import MuiCard from '@mui/material/Card';
-import { loginWithGitHub } from '../../services/authService';
+import { useNavigate } from 'react-router-dom'; // Updated import to use 'useNavigate'
+import { redirectUrl } from '../../services/authService';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -20,9 +21,16 @@ const Card = styled(MuiCard)(({ theme }) => ({
   }),
 }));
 
-const SignInCard: React.FC = () => {
+
+const SignInCard: React.FC = () => {  
   const handleGitHubLogin = () => {
-    loginWithGitHub();
+    // Redirect user to GitHub OAuth login page
+    const clientId = 'Ov23lipyEXKYHFMECXA3';
+    const redirectUri = 'http://localhost:5173/github/callback'; // Your frontend callback URL
+    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}`;
+
+    // Redirect to GitHub for OAuth authorization
+    window.location.href = githubAuthUrl;
   };
 
   return (

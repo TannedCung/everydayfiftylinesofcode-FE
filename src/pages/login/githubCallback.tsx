@@ -23,6 +23,7 @@ const GitHubCallback: React.FC = () => {
           navigate('/dashboard');
         })
         .catch((error) => {
+          console.error(error);
         });
     }
   }, []);

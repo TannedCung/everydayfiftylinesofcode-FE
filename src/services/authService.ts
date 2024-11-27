@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:19981'; // Update with your backend URL
+// Access the environment variable using import.meta.env
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
 /**
  * Fetch tokens by calling the backend's GitHub callback endpoint.
@@ -9,7 +10,7 @@ const API_BASE_URL = 'http://localhost:19981'; // Update with your backend URL
  */
 export const redirectUrl = async (code: string): Promise<{ tokens: any; user: any }> => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/api/accounts/github/callback/`, {
+    const response = await axios.get(`${BASE_URL}/api/accounts/github/callback/`, {
       params: { code },
     });
     return response.data; // Tokens and user info

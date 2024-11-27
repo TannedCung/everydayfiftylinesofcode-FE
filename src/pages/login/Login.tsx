@@ -6,7 +6,7 @@ import ColorModeSelect from '../../shared-theme/ColorModeSelect';
 import SignInCard from './SignInCard'; // Login card with GitHub button
 import Content from './Content'; // Side content component
 
-export default function LoginSide(props: { disableCustomTheme?: boolean }) {
+export default function Login(props: { disableCustomTheme?: boolean }) {
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />

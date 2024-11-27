@@ -3,18 +3,17 @@ import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { SparkLineChart } from '@mui/x-charts/SparkLineChart';
-import { areaElementClasses } from '@mui/x-charts/LineChart';
+import { BarChart } from '@mui/x-charts/BarChart';
+import { Chip } from '@mui/material';
 
 export type StatCardProps = {
   title: string;
   value: string;
   interval: string;
-  trend: 'up' | 'down' | 'neutral';
-  data: number[];
+  data: number[]; // Trend data (daily commits/changes)
+  dates: string[]; // Dates corresponding to the data
 };
 
 function getDaysInMonth(month: number, year: number) {
@@ -32,51 +31,29 @@ function getDaysInMonth(month: number, year: number) {
   return days;
 }
 
-function AreaGradient({ color, id }: { color: string; id: string }) {
-  return (
-    <defs>
-      <linearGradient id={id} x1="50%" y1="0%" x2="50%" y2="100%">
-        <stop offset="0%" stopColor={color} stopOpacity={0.3} />
-        <stop offset="100%" stopColor={color} stopOpacity={0} />
-      </linearGradient>
-    </defs>
-  );
-}
-
 export default function StatCard({
   title,
   value,
   interval,
-  trend,
   data,
+  dates,
 }: StatCardProps) {
   const theme = useTheme();
-  const daysInWeek = getDaysInMonth(4, 2024);
+  const daysInMonth = getDaysInMonth(11, 2024); // Adjust the month and year dynamically as needed
 
-  const trendColors = {
-    up:
-      theme.palette.mode === 'light'
-        ? theme.palette.success.main
-        : theme.palette.success.dark,
-    down:
-      theme.palette.mode === 'light'
-        ? theme.palette.error.main
-        : theme.palette.error.dark,
-    neutral:
-      theme.palette.mode === 'light'
-        ? theme.palette.grey[400]
-        : theme.palette.grey[700],
-  };
+  const chartColor =
+    theme.palette.mode === 'light'
+      ? theme.palette.primary.main
+      : theme.palette.primary.dark;
 
-  const labelColors = {
-    up: 'success' as const,
-    down: 'error' as const,
-    neutral: 'default' as const,
-  };
-
-  const color = labelColors[trend];
-  const chartColor = trendColors[trend];
-  const trendValues = { up: '+25%', down: '-25%', neutral: '+5%' };
+  // Ensure data length matches the days of the month (fill missing days with 0)
+  const chartData = daysInMonth.map((day, index) => {
+    const commitData = data[index] || 0; // If no data, set to 0
+    return {
+      label: day,
+      value: commitData,
+    };
+  });
 
   return (
     <Card variant="outlined" sx={{ height: '100%', flexGrow: 1 }}>
@@ -89,38 +66,45 @@ export default function StatCard({
           sx={{ justifyContent: 'space-between', flexGrow: '1', gap: 1 }}
         >
           <Stack sx={{ justifyContent: 'space-between' }}>
-            <Stack
-              direction="row"
-              sx={{ justifyContent: 'space-between', alignItems: 'center' }}
-            >
-              <Typography variant="h4" component="p">
-                {value}
-              </Typography>
-              <Chip size="small" color={color} label={trendValues[trend]} />
-            </Stack>
+            <Typography variant="h4" component="p">
+              {value} {/* This will display total commits or changes */}
+            </Typography>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
               {interval}
             </Typography>
           </Stack>
-          <Box sx={{ width: '100%', height: 50 }}>
-            <SparkLineChart
+          <Box sx={{ width: '100%'}}>
+            <BarChart
               colors={[chartColor]}
-              data={data}
-              area
-              showHighlight
-              showTooltip
-              xAxis={{
-                scaleType: 'band',
-                data: daysInWeek, // Use the correct property 'data' for xAxis
-              }}
-              sx={{
-                [`& .${areaElementClasses.root}`]: {
-                  fill: `url(#area-gradient-${value})`,
+              data={chartData}
+              xAxis={[
+                {
+                  scaleType: 'band',
+                  data: dates, // The dates are now correctly passed as part of an array
+                },
+              ]}
+              yAxis={[
+                {
+                  label: 'Count',
+                },
+              ]}
+              height={150}
+              margin={{ left: 50, right: 0, top: 20, bottom: 20 }}
+              grid={{ horizontal: true }}
+              series={[
+                {
+                  id: 'commits',
+                  label: 'Commits',
+                  data: chartData.map((item) => item.value),
+                  stack: 'A',
+                },
+              ]}
+              slotProps={{
+                legend: {
+                  hidden: true,
                 },
               }}
-            >
-              <AreaGradient color={chartColor} id={`area-gradient-${value}`} />
-            </SparkLineChart>
+            />
           </Box>
         </Stack>
       </CardContent>

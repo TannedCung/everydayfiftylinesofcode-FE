@@ -11,7 +11,6 @@ import { Chip } from '@mui/material';
 export type StatCardProps = {
   title: string;
   value: string;
-  interval: string;
   data: number[]; // Trend data (daily commits/changes)
   dates: string[]; // Dates corresponding to the data
 };
@@ -34,7 +33,6 @@ function getDaysInMonth(month: number, year: number) {
 export default function StatCard({
   title,
   value,
-  interval,
   data,
   dates,
 }: StatCardProps) {
@@ -69,23 +67,16 @@ export default function StatCard({
             <Typography variant="h4" component="p">
               {value} {/* This will display total commits or changes */}
             </Typography>
-            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              {interval}
-            </Typography>
           </Stack>
           <Box sx={{ width: '100%'}}>
             <BarChart
+              borderRadius={5}
               colors={[chartColor]}
               data={chartData}
               xAxis={[
                 {
                   scaleType: 'band',
                   data: dates, // The dates are now correctly passed as part of an array
-                },
-              ]}
-              yAxis={[
-                {
-                  label: 'Count',
                 },
               ]}
               height={150}

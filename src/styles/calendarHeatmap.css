@@ -1,0 +1,16 @@
+.react-calendar-heatmap rect {
+    rx: 3px; /* Horizontal corner radius */
+    ry: 3px; /* Vertical corner radius */
+  }
+  
+  /* Add rounded corners for each color scale */
+  .react-calendar-heatmap .color-scale-1 { fill: #d6e685; }
+  .react-calendar-heatmap .color-scale-2 { fill: #8cc665; }
+  .react-calendar-heatmap .color-scale-3 { fill: #44a340; }
+  .react-calendar-heatmap .color-scale-4 { fill: #1e6823; }
+  
+  /* Default (empty) fill with rounded corners */
+  .react-calendar-heatmap .color-empty {
+    fill: #ebedf0; /* Default empty box color */
+  }
+  

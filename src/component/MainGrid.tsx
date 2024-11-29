@@ -6,38 +6,46 @@ import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import StatCard, { StatCardProps } from './StatCard';
 import Copyright from '../internals/components/Copyright';
-import { fetchStats } from '../hooks/useFetchStats'; // Ensure the path to your fetchStats function is correct
+import { fetchStats } from '../hooks/useFetchStats'; // Stat fetcher
+import { fetchGitHubActivity } from '../hooks/useFetchGitHubActivity'; // GitHub activity fetcher
+import { GitHubActivityList } from './GitHubActivityList'; // Heatmap component
 
 export default function MainGrid() {
   const [statCards, setStatCards] = useState<StatCardProps[]>([]);
+  const [activityStats, setActivityStats] = useState<{ date: string; count: number }[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [dates, setDates] = useState<string[]>([]); // To store the dates
 
   useEffect(() => {
     const fetchData = async () => {
+      const currentYear = new Date().getFullYear();
+      const startDate = `${currentYear}-01-01`;
+      const endDate = `${currentYear}-12-31`;
+
       try {
-        const { commits, changes, dates } = await fetchStats(); // Fetch stats from backend
+        // Fetch GitHub activity stats for the current year
+        const activityData = await fetchGitHubActivity(startDate, endDate);
+        setActivityStats(activityData);
+
+        // Fetch general stats (e.g., commits and changes)
+        const { commits, changes, dates } = await fetchStats();
         setStatCards([
           {
             title: 'Commits',
-            value: `${commits.total}`,  // Total commits
-            interval: 'Daily', // You can change this based on your preference
-            data: commits.data, // Array of daily commits
-            dates: dates, // Pass dates here
+            value: `${commits.total}`,
+            data: commits.data,
+            dates,
           },
           {
             title: 'Changes',
-            value: `${changes.total}`,  // Total changes
-            interval: 'Daily', // You can change this based on your preference
-            data: changes.data, // Array of daily changes
-            dates: dates, // Pass dates here
+            value: `${changes.total}`,
+            data: changes.data,
+            dates,
           },
         ]);
-        setDates(dates); // Store dates for later usage (if needed)
       } catch (error) {
-        console.error('Error fetching stats:', error); // Handle errors gracefully
+        console.error('Error fetching data:', error);
       } finally {
-        setLoading(false);  // Set loading to false once data is fetched
+        setLoading(false);
       }
     };
 
@@ -67,14 +75,24 @@ export default function MainGrid() {
             </Stack>
           </Grid>
         ) : (
-          statCards.map((card, index) => (
-            <Grid item key={index} xs={12} sm={6} lg={6}>
-              <StatCard {...card} /> {/* Render StatCard for each stat */}
+          <>
+            {/* Stat Cards */}
+            {statCards.map((card, index) => (
+              <Grid item key={index} xs={12} sm={6} lg={6}>
+                <StatCard {...card} />
+              </Grid>
+            ))}
+
+            {/* GitHub Activity Heatmap */}
+            <Grid item xs={6}>
+              <GitHubActivityList
+                stats={activityStats} // Pass the activity data
+              />
             </Grid>
-          ))
+          </>
         )}
       </Grid>
-      <Copyright sx={{ my: 4 }} /> {/* Footer */}
+      <Copyright sx={{ my: 4 }} />
     </Box>
   );
 }

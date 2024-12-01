@@ -32,7 +32,6 @@ export function useFetchChallenge() {
           throw new Error('No challenge data available');
         }
 
-        console.log('Fetched challenges: ', data); // Debug log
         setChallenges(data);
       } catch (err: any) {
         setError(err.message || 'An error occurred while fetching challenge data');

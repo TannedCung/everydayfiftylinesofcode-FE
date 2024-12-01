@@ -2,31 +2,40 @@ import React, { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import StatCard, { StatCardProps } from './StatCard';
 import Copyright from '../internals/components/Copyright';
 import { fetchStats } from '../hooks/useFetchStats'; // Stat fetcher
 import { fetchGitHubActivity } from '../hooks/useFetchGitHubActivity'; // GitHub activity fetcher
 import { GitHubActivityList } from './GitHubActivityList'; // Heatmap component
+import { usePersonalStats } from '../hooks/useFetchPersonalStats'; // Personal stats fetcher
+import PersonalStatCard from './PersonalStatCard'; // Personal stats component
+import { Tabs, Tab, Select, MenuItem, InputLabel, FormControl, SelectChangeEvent } from '@mui/material'; // Import Select and MenuItem
 
 export default function MainGrid() {
   const [statCards, setStatCards] = useState<StatCardProps[]>([]);
   const [activityStats, setActivityStats] = useState<{ date: string; count: number }[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear()); // Default to current year
+
+  // Use the personal stats hook
+  const { stats: personalStats, loading: personalLoading } = usePersonalStats();
+
+  // Correcting the type for the event
+  const handleYearChange = (event: SelectChangeEvent<number>) => {
+    const year = Number(event.target.value); // Ensure the value is treated as a number
+    setSelectedYear(year);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
-      const currentYear = new Date().getFullYear();
-      const startDate = `${currentYear}-01-01`;
-      const endDate = `${currentYear}-12-31`;
+      const startDate = `${selectedYear}-01-01`;
+      const endDate = `${selectedYear}-12-31`;
 
       try {
-        // Fetch GitHub activity stats for the current year
         const activityData = await fetchGitHubActivity(startDate, endDate);
         setActivityStats(activityData);
 
-        // Fetch general stats (e.g., commits and changes)
         const { commits, changes, dates } = await fetchStats();
         setStatCards([
           {
@@ -50,20 +59,17 @@ export default function MainGrid() {
     };
 
     fetchData();
-  }, []);
-
+  }, [selectedYear]); // Re-fetch when the year changes
+  
   return (
     <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
-      <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
-        Overview
-      </Typography>
       <Grid
         container
         spacing={2}
         columns={12}
         sx={{ mb: (theme) => theme.spacing(2) }}
       >
-        {loading ? (
+        {loading || personalLoading ? (
           <Grid item xs={12}>
             <Stack
               direction="row"
@@ -71,24 +77,62 @@ export default function MainGrid() {
               alignItems="center"
               sx={{ height: 200 }}
             >
-              <CircularProgress /> {/* Display loading spinner */}
+              <CircularProgress />
             </Stack>
           </Grid>
         ) : (
           <>
+            {/* Personal Stat Cards */}
+            {personalStats && (
+              <>
+                <Grid item xs={12} sm={4} lg={4}>
+                  <PersonalStatCard
+                    title="Current Streak"
+                    value={`${personalStats.activityStreak.currentStreak} days`}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4} lg={4}>
+                  <PersonalStatCard
+                    title="Longest Streak"
+                    value={`${personalStats.activityStreak.longestStreak} days`}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4} lg={4}>
+                  <PersonalStatCard
+                    title="Daily Goal"
+                    value={`${personalStats.dailyGoalProgress.progress} %`}
+                  />
+                </Grid>
+              </>
+            )}
             {/* Stat Cards */}
             {statCards.map((card, index) => (
               <Grid item key={index} xs={12} sm={6} lg={6}>
                 <StatCard {...card} />
               </Grid>
             ))}
-
             {/* GitHub Activity Heatmap */}
-            <Grid item xs={6}>
-              <GitHubActivityList
-                stats={activityStats} // Pass the activity data
-              />
+            <Grid item xs={10} sm={10} lg={10}>
+              <GitHubActivityList stats={activityStats} />
             </Grid>
+            {/* Year Selector Dropdown */}
+            <Grid item xs={2} sm={2} lg={2}>
+                  <FormControl fullWidth>
+                    <InputLabel id="year-select-label">Year</InputLabel>
+                    <Select
+                      labelId="year-select-label"
+                      value={selectedYear}
+                      label="Year"
+                      onChange={handleYearChange}
+                    >
+                      {Array.from({ length: 10 }, (_, index) => new Date().getFullYear() - index).map((year) => (
+                        <MenuItem key={year} value={year}>
+                          {year}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
           </>
         )}
       </Grid>

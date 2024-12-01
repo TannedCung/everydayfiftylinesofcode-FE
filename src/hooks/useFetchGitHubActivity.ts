@@ -2,24 +2,38 @@ import axiosInstance from '../services/axiosInstance'; // Ensure axiosInstance i
 
 export async function fetchGitHubActivity(startDate: string, endDate: string) {
   try {
-    const response = await axiosInstance.get('/api/github/commits/by_day/', {
-      params: { start_date: startDate, end_date: endDate }, // Pass query params
+    // Send GET request with the required date range
+    const response = await axiosInstance.get('/api/github/commits/contribution-calendar/', {
+      params: { year: new Date(startDate).getFullYear() }, // Assuming year is sufficient for this query
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('github_token')}`, // Example for token
+      },
     });
 
     const data = response.data;
 
-    // Ensure the response data is an array
-    if (!Array.isArray(data)) {
-      throw new Error('Expected data to be an array');
+    // Check for valid response data structure
+    if (!data || !data.data || !data.data.user || !data.data.user.contributionsCollection) {
+      throw new Error('Invalid response data structure');
     }
 
-    // Format data to match activity stats structure
-    const activityStats = data.map((day) => ({
-      date: day.date, // Date in YYYY-MM-DD format
-      count: day.total_commits, // Number of commits for the date
-    }));
+    const contributionCalendar = data.data.user.contributionsCollection.contributionCalendar;
 
-    return activityStats;
+    // Flatten weeks and contributionDays into a single array of activities
+    const activityStats = contributionCalendar.weeks.flatMap((week) => 
+      week.contributionDays.map((day: { date: any; contributionCount: any; }) => ({
+        date: day.date,  // Date in YYYY-MM-DD format
+        count: day.contributionCount,  // Number of commits for the date
+      }))
+    );
+
+    // Filter out activity stats that fall outside the requested date range
+    const filteredStats = activityStats.filter((stat: { date: string | number | Date; }) => {
+      const date = new Date(stat.date);
+      return date >= new Date(startDate) && date <= new Date(endDate);
+    });
+
+    return filteredStats;
   } catch (error) {
     console.error('Error fetching GitHub activity:', error);
     throw error; // Rethrow the error after logging

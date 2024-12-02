@@ -9,7 +9,7 @@ interface PersonalStatCardProps {
   value: string | number;
 }
 
-const PersonalStatCard: React.FC<PersonalStatCardProps> = ({ title, value, description }) => {
+const PersonalStatCard: React.FC<PersonalStatCardProps> = ({ title, value }) => {
   return (
     <Card sx={{ minWidth: 100, mb: 2 }}>
       <CardContent>

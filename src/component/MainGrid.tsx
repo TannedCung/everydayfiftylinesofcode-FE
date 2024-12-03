@@ -66,20 +66,10 @@ export default function MainGrid() {
 
   return (
     <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
-      <Grid
-        container
-        spacing={2}
-        columns={12}
-        sx={{ mb: (theme) => theme.spacing(2) }}
-      >
+      <Grid container spacing={2} columns={12} sx={{ mb: (theme) => theme.spacing(2) }}>
         {loading || personalLoading || challengeLoading ? (
           <Grid item xs={12}>
-            <Stack
-              direction="row"
-              justifyContent="center"
-              alignItems="center"
-              sx={{ height: 200 }}
-            >
+            <Stack direction="row" justifyContent="center" alignItems="center" sx={{ height: 200 }}>
               <CircularProgress />
             </Stack>
           </Grid>
@@ -89,32 +79,20 @@ export default function MainGrid() {
             {personalStats && (
               <>
                 <Grid item xs={12} sm={6} lg={3}>
-                  <PersonalStatCard
-                    title="Current Streak"
-                    value={`${personalStats.activityStreak.currentStreak} days`}
-                  />
+                  <PersonalStatCard title="Current Streak" value={`${personalStats.activityStreak.currentStreak} days`} />
                 </Grid>
                 <Grid item xs={12} sm={6} lg={3}>
-                  <PersonalStatCard
-                    title="Longest Streak"
-                    value={`${personalStats.activityStreak.longestStreak} days`}
-                  />
+                  <PersonalStatCard title="Longest Streak" value={`${personalStats.activityStreak.longestStreak} days`} />
                 </Grid>
                 <Grid item xs={12} sm={6} lg={3}>
-                  <PersonalStatCard
-                    title="Daily Goal"
-                    value={`${personalStats.dailyGoalProgress.progress} %`}
-                  />
+                  <PersonalStatCard title="Daily Goal" value={`${personalStats.dailyGoalProgress.progress} %`} />
                 </Grid>
               </>
             )}
             {/* Challenge Count Card */}
             {challenges && (
               <Grid item xs={12} sm={6} lg={3}>
-                <PersonalStatCard
-                  title="Challenges"
-                  value={`${challenges.length}`}
-                />
+                <PersonalStatCard title="Challenges" value={`${challenges.length}`} />
               </Grid>
             )}
             {/* Stat Cards */}
@@ -131,12 +109,7 @@ export default function MainGrid() {
             <Grid item xs={2} sm={2} lg={2}>
               <FormControl fullWidth>
                 <InputLabel id="year-select-label">Year</InputLabel>
-                <Select
-                  labelId="year-select-label"
-                  value={selectedYear}
-                  label="Year"
-                  onChange={handleYearChange}
-                >
+                <Select labelId="year-select-label" value={selectedYear} label="Year" onChange={handleYearChange}>
                   {Array.from({ length: 10 }, (_, index) => new Date().getFullYear() - index).map((year) => (
                     <MenuItem key={year} value={year}>
                       {year}

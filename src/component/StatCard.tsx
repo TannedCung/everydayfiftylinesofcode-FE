@@ -56,10 +56,7 @@ export default function StatCard({
   return (
     <Card variant="outlined" sx={{ height: '100%', flexGrow: 1 }}>
       <CardContent>
-        <Stack
-          direction="column"
-          sx={{ justifyContent: 'space-between', flexGrow: '1', gap: 1 }}
-        >
+        <Stack direction="column" sx={{ justifyContent: 'space-between', flexGrow: '1', gap: 1 }}>
           <Stack sx={{ justifyContent: 'space-between' }}>
             <Typography variant="subtitle1" component="p">
               {title} {/* This will display total commits or changes */}
@@ -68,7 +65,7 @@ export default function StatCard({
               {value} {/* This will display total commits or changes */}
             </Typography>
           </Stack>
-          <Box sx={{ width: '100%'}}>
+          <Box sx={{ width: '100%' }}>
             <BarChart
               borderRadius={5}
               colors={[chartColor]}

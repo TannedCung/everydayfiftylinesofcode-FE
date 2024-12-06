@@ -1,5 +1,5 @@
+// axiosInstance.ts
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
@@ -7,7 +7,7 @@ const axiosInstance = axios.create({
   baseURL: BASE_URL,
 });
 
-// Request interceptor: Add Bearer token to Authorization header
+// Request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
     const authTokens = localStorage.getItem('authTokens');
@@ -19,23 +19,52 @@ axiosInstance.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Response interceptor: Handle 401 errors
+// Response interceptor
 axiosInstance.interceptors.response.use(
-  (response) => response, // Return response as-is for successful requests
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      // Clear any stored tokens
-      localStorage.removeItem('authTokens');
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
 
-      // Redirect to login page
-      const navigate = useNavigate();
-      navigate('/login'); // Adjust the path as per your app's routing
+    // If error is 401 and we haven't tried to refresh token yet
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        const authTokens = localStorage.getItem('authTokens');
+        if (!authTokens) {
+          throw new Error('No refresh token available');
+        }
+
+        const { refresh } = JSON.parse(authTokens);
+        
+        // Request new access token
+        const response = await axios.post(`${BASE_URL}/auth/refresh/`, {
+          refresh: refresh
+        });
+
+        const { access } = response.data;
+
+        // Update stored tokens
+        localStorage.setItem('authTokens', JSON.stringify({
+          ...JSON.parse(authTokens),
+          access
+        }));
+
+        // Retry original request with new token
+        originalRequest.headers['Authorization'] = `Bearer ${access}`;
+        return axiosInstance(originalRequest);
+
+      } catch (refreshError) {
+        // Clear tokens and redirect to login
+        localStorage.removeItem('authTokens');
+        window.location.href = '/';
+        return Promise.reject(refreshError);
+      }
     }
+
     return Promise.reject(error);
   }
 );

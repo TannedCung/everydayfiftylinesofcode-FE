@@ -8,7 +8,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import SelectContent from './SelectContent';
 import MenuContent from './MenuContent';
-import CardAlert from './CardAlert';
+// import CardAlert from './CardAlert';
 import OptionsMenu from './OptionsMenu';
 
 const drawerWidth = 240;
@@ -48,7 +48,7 @@ export default function SideMenu() {
       </Box>
       <Divider />
       <MenuContent />
-      <CardAlert />
+      {/* <CardAlert /> */}
       <Stack
         direction="row"
         sx={{
@@ -68,9 +68,6 @@ export default function SideMenu() {
         <Box sx={{ mr: 'auto' }}>
           <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: '16px' }}>
             {user?.username || 'User'}
-          </Typography>
-          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            {user?.email || 'Email'}
           </Typography>
         </Box>
         <OptionsMenu />

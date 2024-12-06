@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { NavigateFunction } from 'react-router-dom';
 
 // Access the environment variable using import.meta.env
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
@@ -18,4 +19,10 @@ export const redirectUrl = async (code: string): Promise<{ tokens: any; user: an
     console.error('Error fetching tokens from backend:', error.response?.data || error.message);
     throw error;
   }
+};
+
+export const logout = (navigate: NavigateFunction) => {
+  localStorage.removeItem('authTokens');
+  localStorage.removeItem('user');
+  navigate('/');
 };

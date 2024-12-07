@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import SelectContent from './SelectContent';
+// import SelectContent from './SelectContent';
 import MenuContent from './MenuContent';
 // import CardAlert from './CardAlert';
 import OptionsMenu from './OptionsMenu';
@@ -37,14 +37,17 @@ export default function SideMenu() {
         },
       }}
     >
-      <Box
-        sx={{
-          display: 'flex',
-          mt: 'calc(var(--template-frame-height, 0px) + 4px)',
-          p: 1.5,
-        }}
-      >
-        <SelectContent />
+      <Box sx={{ p: 2 }}>  {/* Add padding around image */}
+        <img 
+          src="/logo_no_bg.png" 
+          alt="Logo" 
+          style={{ 
+            width: '80%',  // Reduce from 100% to 80%
+            height: 'auto',
+            display: 'block',
+            margin: '0 auto' // Center the image
+          }} 
+        />
       </Box>
       <Divider />
       <MenuContent />

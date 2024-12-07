@@ -45,11 +45,10 @@ export default function SideMenu() {
             width: '80%',  // Reduce from 100% to 80%
             height: 'auto',
             display: 'block',
-            margin: '0 auto' // Center the image
+            margin: '1rem auto' // Center the image
           }} 
         />
       </Box>
-      <Divider />
       <MenuContent />
       {/* <CardAlert /> */}
       <Stack

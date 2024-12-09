@@ -4,8 +4,9 @@ import Login from '../pages/login/Login';
 import GitHubCallback from '../pages/login/githubCallback';
 import Dashboard from '../pages/dashboard/Dashboard';
 import ProtectedRoute from './ProtectedRoute';
-import ChallengesPage from '../pages/challenge/Challenge';
+import { ChallengesPage } from '../pages/challenge/Challenge';
 import MainLayout from '../layouts/MainLayout';
+import { ChallengeDetail } from '../pages/challenge/ChallengeDetail';
 
 const AppRouter: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ const AppRouter: React.FC = () => {
         <Route element={<MainLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/challenges" element={<ChallengesPage />} />
+          <Route path="/challenges/:id" element={<ChallengeDetail />} />
         </Route>
       </Route>
     </Routes>

@@ -13,3 +13,8 @@ export const joinChallenge = async (challengeId: number) => {
   });
   return response.data;
 };
+
+export const fetchChallenge = async (id: number): Promise<Challenge> => {
+  const response = await axiosInstance.get(`/api/challenge/${id}/`);
+  return response.data;
+};

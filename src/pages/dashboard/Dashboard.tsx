@@ -6,7 +6,6 @@ import MainGrid from '../../component/MainGrid';
 export default function Dashboard() {
   return (
     <>
-      <Header />
       <MainGrid />
     </>
   );

@@ -5,6 +5,7 @@ import AppTheme from '../shared-theme/AppTheme';
 import SideMenu from '../component/SideMenu';
 import AppNavbar from '../component/AppNavbar';
 import { Outlet } from 'react-router-dom';
+import Header from '../component/Header';
 
 export default function MainLayout() {
   return (
@@ -23,6 +24,7 @@ export default function MainLayout() {
             overflow: 'auto',
           })}
         >
+        <Header />
           <Stack
             spacing={2}
             sx={{

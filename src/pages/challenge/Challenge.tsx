@@ -93,26 +93,34 @@ export const ChallengesPage: React.FC = () => {
         </Box>
       ) : (
         <>
-          <Grid container spacing={3}>
-            {data.results.map((challenge) => (
-              <Grid 
-                item 
-                key={challenge.id}
-                sx={{
-                  width: '320px', // Fixed width for card
-                  maxWidth: '100%', // Ensures responsiveness on very small screens
-                  flexGrow: 0, // Prevents growing beyond fixed width
-                  margin: '0 auto', // Centers items if not filling row
-                }}
-              >
-                <ChallengeCard
-                  challenge={challenge}
-                  isJoined={title === 'Your Challenges'}
-                  onJoin={() => {}}
-                />
-              </Grid>
-            ))}
-          </Grid>
+          <Box sx={{ overflowX: 'auto', pb: 2 }}> {/* Container for horizontal scroll */}
+            <Grid 
+              container 
+              spacing={3}
+              sx={{
+                flexWrap: 'nowrap', // Prevent wrapping to next line
+                width: 'max-content', // Allow container to grow based on content
+                mb: -2, // Offset bottom padding from scroll container
+              }}
+            >
+              {data.results.map((challenge) => (
+                <Grid 
+                  item 
+                  key={challenge.id}
+                  sx={{
+                    width: '320px', // Fixed width for each card
+                    flexShrink: 0, // Prevent items from shrinking
+                  }}
+                >
+                  <ChallengeCard
+                    challenge={challenge}
+                    isJoined={title === 'Your Challenges'}
+                    onJoin={() => {}}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
           
           {data.count > 0 && (
             <Box display="flex" justifyContent="center" mt={4}>

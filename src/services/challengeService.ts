@@ -2,11 +2,26 @@
 import axiosInstance from './axiosInstance';
 import { Challenge } from '../types/challenge';
 
-export const fetchChallenges = async (): Promise<Challenge[]> => {
-  const response = await axiosInstance.get('/api/challenge/');
+// src/services/challengeService.ts
+interface PaginatedResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
+export const fetchChallenges = async (
+  myChallenges?: boolean,
+  page: number = 1
+): Promise<PaginatedResponse<Challenge>> => {
+  const response = await axiosInstance.get('/api/challenge/', {
+    params: {
+      my_challenges: myChallenges,
+      page
+    }
+  });
   return response.data;
 };
-
 export const joinChallenge = async (challengeId: number) => {
   const response = await axiosInstance.post('/api/user_challenges/', {
     challenge: challengeId

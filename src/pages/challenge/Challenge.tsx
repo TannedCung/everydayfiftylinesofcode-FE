@@ -1,11 +1,21 @@
 // Challenge.tsx
 import React, { useEffect, useState } from 'react';
-import { Grid, Typography, Box, CircularProgress, Alert, Container } from '@mui/material';
+import { Grid, Typography, Box, CircularProgress, Alert, Container, Pagination } from '@mui/material';
 import { fetchChallenges } from '../../services/challengeService';
-import { fetchUserChallenges, joinChallenge } from '../../services/userChallengeService';
 import { Challenge } from '../../types/challenge';
 import { styled } from '@mui/material/styles';
 import { ChallengeCard } from '../../component/ChallengeCard';
+
+interface PaginatedResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Challenge[];
+}
+
+interface ChallengeState extends PaginatedResponse {
+  page: number;
+}
 
 const StyledContainer = styled(Container)(({ theme }) => ({
   paddingTop: theme.spacing(4),
@@ -17,108 +27,129 @@ const Header = styled(Box)(({ theme }) => ({
 }));
 
 export const ChallengesPage: React.FC = () => {
-  const [availableChallenges, setAvailableChallenges] = useState<Challenge[]>([]);
-  const [joinedChallenges, setJoinedChallenges] = useState<Challenge[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [myChallenges, setMyChallenges] = useState<ChallengeState>({
+    results: [],
+    count: 0,
+    next: null,
+    previous: null,
+    page: 1
+  });
+  
+  const [availableChallenges, setAvailableChallenges] = useState<ChallengeState>({
+    results: [],
+    count: 0,
+    next: null,
+    previous: null,
+    page: 1
+  });
+  
+  const [loading, setLoading] = useState({
+    myChallenges: false,
+    availableChallenges: false
+  });
+  
   const [error, setError] = useState<string | null>(null);
-  const [joiningChallenge, setJoiningChallenge] = useState(false);
 
-  const handleJoinChallenge = async (challengeId: number) => {
+  const loadChallenges = async (isMyChallenges: boolean, page: number = 1) => {
+    const loadingKey = isMyChallenges ? 'myChallenges' : 'availableChallenges';
+    const setterFunction = isMyChallenges ? setMyChallenges : setAvailableChallenges;
+
     try {
-      setJoiningChallenge(true);
-      await joinChallenge(challengeId);
+      setLoading(prev => ({ ...prev, [loadingKey]: true }));
+      const response = await fetchChallenges(isMyChallenges, page);
       
-      // Update challenge lists after joining
-      const joinedChallenge = availableChallenges.find(c => c.id === challengeId);
-      if (joinedChallenge) {
-        setJoinedChallenges([...joinedChallenges, joinedChallenge]);
-        setAvailableChallenges(availableChallenges.filter(c => c.id !== challengeId));
-      }
+      setterFunction({
+        ...response,
+        page,
+      });
     } catch (error) {
-      setError('Failed to join challenge');
+      setError(`Failed to load ${isMyChallenges ? 'your' : 'available'} challenges`);
     } finally {
-      setJoiningChallenge(false);
+      setLoading(prev => ({ ...prev, [loadingKey]: false }));
     }
   };
 
   useEffect(() => {
-    const loadChallenges = async () => {
-      try {
-        setLoading(true);
-        const [allChallenges, userChallenges] = await Promise.all([
-          fetchChallenges(),
-          fetchUserChallenges()
-        ]);
-        
-        const joinedIds = new Set(userChallenges.map(c => c.id));
-        setJoinedChallenges(userChallenges);
-        setAvailableChallenges(allChallenges.filter(c => !joinedIds.has(c.id)));
-        
-      } catch (error) {
-        setError('Failed to load challenges');
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadChallenges();
+    loadChallenges(true);
+    loadChallenges(false);
   }, []);
 
-  return (
-    <StyledContainer maxWidth="lg">
-      {error && <Alert severity="error" sx={{ mb: 4 }}>{error}</Alert>}
+  const renderChallengeSection = (
+    title: string,
+    subtitle: string,
+    data: ChallengeState,
+    isLoading: boolean,
+    onPageChange: (page: number) => void
+  ) => (
+    <Box mb={6}>
+      <Header>
+        <Typography variant="h4" component="h1" gutterBottom>{title}</Typography>
+        <Typography variant="subtitle1" color="text.secondary">{subtitle}</Typography>
+      </Header>
       
-      {loading ? (
+      {isLoading && data.page === 1 ? (
         <Box display="flex" justifyContent="center" p={4}>
           <CircularProgress />
         </Box>
       ) : (
         <>
-          {/* Your Challenges Section */}
-          <Box mb={6}>
-            <Header>
-              <Typography variant="h4" component="h1" gutterBottom>
-                Your Challenges
-              </Typography>
-              <Typography variant="subtitle1" color="text.secondary">
-                Track your ongoing challenges
-              </Typography>
-            </Header>
-            <Grid container spacing={3}>
-              {joinedChallenges.map((challenge) => (
-                <Grid item key={challenge.id} xs={12} sm={6} md={4}>
-                  <ChallengeCard
-                    challenge={challenge}
-                    isJoined={true}
-                    onJoin={() => {}}
-                  />
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
-
-          {/* Available Challenges Section */}
-          <Box>
-            <Header>
-              <Typography variant="h4" component="h1" gutterBottom>
-                Available Challenges
-              </Typography>
-              <Typography variant="subtitle1" color="text.secondary">
-                Join a new challenge and start your coding journey
-              </Typography>
-            </Header>
-            <Grid container spacing={3}>
-              {availableChallenges.map((challenge) => (
-                <Grid item key={challenge.id} xs={12} sm={6} md={4}>
-                  <ChallengeCard
-                    challenge={challenge}
-                    isJoined={false}
-                    onJoin={handleJoinChallenge}
-                  />
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
+          <Grid container spacing={3}>
+            {data.results.map((challenge) => (
+              <Grid 
+                item 
+                key={challenge.id}
+                sx={{
+                  width: '320px', // Fixed width for card
+                  maxWidth: '100%', // Ensures responsiveness on very small screens
+                  flexGrow: 0, // Prevents growing beyond fixed width
+                  margin: '0 auto', // Centers items if not filling row
+                }}
+              >
+                <ChallengeCard
+                  challenge={challenge}
+                  isJoined={title === 'Your Challenges'}
+                  onJoin={() => {}}
+                />
+              </Grid>
+            ))}
+          </Grid>
+          
+          {data.count > 0 && (
+            <Box display="flex" justifyContent="center" mt={4}>
+              <Pagination
+                count={Math.ceil(data.count / 9)}
+                page={data.page}
+                onChange={(_e, page) => onPageChange(page)}
+                disabled={isLoading}
+                color="primary"
+                showFirstButton
+                showLastButton
+              />
+            </Box>
+          )}
         </>
+      )}
+    </Box>
+  );
+
+  return (
+    <StyledContainer maxWidth="lg">
+      {error && <Alert severity="error" sx={{ mb: 4 }}>{error}</Alert>}
+      
+      {renderChallengeSection(
+        'Your Challenges',
+        'Track your ongoing challenges',
+        myChallenges,
+        loading.myChallenges,
+        (page) => loadChallenges(true, page)
+      )}
+      
+      {renderChallengeSection(
+        'Available Challenges',
+        'Join a new challenge and start your coding journey',
+        availableChallenges,
+        loading.availableChallenges,
+        (page) => loadChallenges(false, page)
       )}
     </StyledContainer>
   );

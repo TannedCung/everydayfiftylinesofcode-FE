@@ -76,7 +76,6 @@ export const ChallengesPage: React.FC = () => {
 
   const renderChallengeSection = (
     title: string,
-    subtitle: string,
     data: ChallengeState,
     isLoading: boolean,
     onPageChange: (page: number) => void
@@ -84,7 +83,6 @@ export const ChallengesPage: React.FC = () => {
     <Box mb={6}>
       <Header>
         <Typography variant="h4" component="h1" gutterBottom>{title}</Typography>
-        <Typography variant="subtitle1" color="text.secondary">{subtitle}</Typography>
       </Header>
       
       {isLoading && data.page === 1 ? (
@@ -114,7 +112,7 @@ export const ChallengesPage: React.FC = () => {
                 >
                   <ChallengeCard
                     challenge={challenge}
-                    isJoined={title === 'Your Challenges'}
+                    isJoined={title === 'Your challenges'}
                     onJoin={() => {}}
                   />
                 </Grid>
@@ -145,16 +143,14 @@ export const ChallengesPage: React.FC = () => {
       {error && <Alert severity="error" sx={{ mb: 4 }}>{error}</Alert>}
       
       {renderChallengeSection(
-        'Your Challenges',
-        'Track your ongoing challenges',
+        'Your challenges',
         myChallenges,
         loading.myChallenges,
         (page) => loadChallenges(true, page)
       )}
       
       {renderChallengeSection(
-        'Available Challenges',
-        'Join a new challenge and start your coding journey',
+        'Explore more challenges',
         availableChallenges,
         loading.availableChallenges,
         (page) => loadChallenges(false, page)

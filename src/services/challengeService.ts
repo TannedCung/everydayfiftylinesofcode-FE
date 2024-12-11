@@ -10,6 +10,19 @@ interface PaginatedResponse<T> {
   results: T[];
 }
 
+interface CreateChallengeData {
+  name: string;
+  type: 'commits' | 'lines_of_code';
+  commitment_by: 'daily' | 'accumulate';
+  description: string;
+  target_value: number;
+  frequency: number;
+  start_date: string;
+  end_date?: string | null;
+  background_image?: File;
+  logo?: File;
+}
+
 export const fetchChallenges = async (
   myChallenges?: boolean,
   page: number = 1
@@ -31,5 +44,35 @@ export const joinChallenge = async (challengeId: number) => {
 
 export const fetchChallenge = async (id: number): Promise<Challenge> => {
   const response = await axiosInstance.get(`/api/challenge/${id}/`);
+  return response.data;
+};
+
+export const createChallenge = async (data: CreateChallengeData): Promise<Challenge> => {
+  // Create FormData for file uploads
+  const formData = new FormData();
+  
+  // Add all non-file fields
+  Object.keys(data).forEach(key => {
+    if (key !== 'background_image' && key !== 'logo') {
+      if (data[key] !== null && data[key] !== undefined) {
+        formData.append(key, data[key].toString());
+      }
+    }
+  });
+
+  // Add file fields if present
+  if (data.background_image) {
+    formData.append('background_image', data.background_image);
+  }
+  if (data.logo) {
+    formData.append('logo', data.logo);
+  }
+
+  const response = await axiosInstance.post('/api/challenge/', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  
   return response.data;
 };

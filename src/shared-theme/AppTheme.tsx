@@ -49,7 +49,7 @@ export default function AppTheme({
     return <React.Fragment>{children}</React.Fragment>;
   }
   return (
-    <ThemeProvider theme={theme} disableTransitionOnChange>
+    <ThemeProvider theme={theme}>
       {children}
     </ThemeProvider>
   );

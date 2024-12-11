@@ -1,10 +1,13 @@
 // Challenge.tsx
 import React, { useEffect, useState } from 'react';
 import { Grid, Typography, Box, CircularProgress, Alert, Container, Pagination } from '@mui/material';
-import { fetchChallenges } from '../../services/challengeService';
+import { fetchChallenges, createChallenge } from '../../services/challengeService';
 import { Challenge } from '../../types/challenge';
 import { styled } from '@mui/material/styles';
 import { ChallengeCard } from '../../component/ChallengeCard';
+import { Button } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import { CreateChallengeForm } from '../../component/CreateChallengeForm';
 
 interface PaginatedResponse {
   count: number;
@@ -25,7 +28,6 @@ const StyledContainer = styled(Container)(({ theme }) => ({
 const Header = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(3),
 }));
-
 export const ChallengesPage: React.FC = () => {
   const [myChallenges, setMyChallenges] = useState<ChallengeState>({
     results: [],
@@ -69,6 +71,19 @@ export const ChallengesPage: React.FC = () => {
     }
   };
 
+  const [openCreateForm, setOpenCreateForm] = useState(false);
+
+  const handleCreateChallenge = async (values: any) => {
+    try {
+      await createChallenge(values);
+      setOpenCreateForm(false);
+      // Refresh challenges
+      await loadChallenges(true);
+    } catch (error) {
+      setError('Failed to create challenge');
+    }
+  };
+
   useEffect(() => {
     loadChallenges(true);
     loadChallenges(false);
@@ -81,8 +96,26 @@ export const ChallengesPage: React.FC = () => {
     onPageChange: (page: number) => void
   ) => (
     <Box mb={6}>
-      <Header>
+      <Header sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography variant="h4" component="h1" gutterBottom>{title}</Typography>
+        {title === 'Your challenges' && (
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={() => setOpenCreateForm(true)}
+            sx={{ 
+              minWidth: '40px',
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              padding: 0,
+              '& .MuiButton-startIcon': {
+                margin: 0
+              }
+            }}
+          />
+        )}
       </Header>
       
       {isLoading && data.page === 1 ? (
@@ -150,11 +183,17 @@ export const ChallengesPage: React.FC = () => {
       )}
       
       {renderChallengeSection(
-        'Explore more challenges',
+        'Recommended For You',
         availableChallenges,
         loading.availableChallenges,
         (page) => loadChallenges(false, page)
       )}
+
+      <CreateChallengeForm 
+        open={openCreateForm}
+        onClose={() => setOpenCreateForm(false)}
+        onSubmit={handleCreateChallenge}
+      />
     </StyledContainer>
   );
 };

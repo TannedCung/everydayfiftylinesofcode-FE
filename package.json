@@ -21,12 +21,15 @@
     "@mui/x-date-pickers-pro": "^7.22.2",
     "@mui/x-tree-view": "^7.22.1",
     "axios": "^1.7.7",
+    "date-fns": "^2.25.0",
     "dayjs": "^1.11.13",
+    "formik": "^2.4.6",
     "react": "^18.3.1",
     "react-calendar-heatmap": "^1.9.0",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.28.0",
-    "react-tooltip": "^5.28.0"
+    "react-tooltip": "^5.28.0",
+    "yup": "^1.5.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",

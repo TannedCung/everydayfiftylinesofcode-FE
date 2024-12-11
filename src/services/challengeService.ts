@@ -47,32 +47,11 @@ export const fetchChallenge = async (id: number): Promise<Challenge> => {
   return response.data;
 };
 
-export const createChallenge = async (data: CreateChallengeData): Promise<Challenge> => {
-  // Create FormData for file uploads
-  const formData = new FormData();
-  
-  // Add all non-file fields
-  Object.keys(data).forEach(key => {
-    if (key !== 'background_image' && key !== 'logo') {
-      if (data[key] !== null && data[key] !== undefined) {
-        formData.append(key, data[key].toString());
-      }
-    }
-  });
-
-  // Add file fields if present
-  if (data.background_image) {
-    formData.append('background_image', data.background_image);
-  }
-  if (data.logo) {
-    formData.append('logo', data.logo);
-  }
-
+export const createChallenge = async (formData: FormData): Promise<Challenge> => {
   const response = await axiosInstance.post('/api/challenge/', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
   });
-  
   return response.data;
 };

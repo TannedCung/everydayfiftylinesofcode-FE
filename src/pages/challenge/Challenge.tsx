@@ -76,10 +76,15 @@ export const ChallengesPage: React.FC = () => {
   const handleCreateChallenge = async (values: any) => {
     try {
       await createChallenge(values);
+      
       setOpenCreateForm(false);
-      // Refresh challenges
-      await loadChallenges(true);
+      
+      await Promise.all([
+        loadChallenges(true).then(() => console.log('My challenges reloaded')),
+        loadChallenges(false).then(() => console.log('Available challenges reloaded'))
+      ]);      
     } catch (error) {
+      console.error('Error creating challenge:', error);
       setError('Failed to create challenge');
     }
   };

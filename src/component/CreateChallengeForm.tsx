@@ -29,30 +29,6 @@ interface CreateChallengeFormProps {
   onSubmit: (values: FormData) => void;
 }
 
-interface Challenge {
-  id: number;
-  name: string;
-  type: string;
-  commitment_by: string;
-  description: string;
-  target_value: number;
-  frequency: number;
-  start_date: string;
-  end_date: string | null;
-  background_image: string | null;
-  logo: string | null;
-}
-
-const createChallenge = async (formData: FormData): Promise<Challenge> => {
-  const response = await axiosInstance.post('/api/challenge/', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-  return response.data;
-};
-
-
 const validationSchema = yup.object({
   name: yup.string().required('Name is required'),
   type: yup.string().required('Type is required'),
@@ -73,6 +49,45 @@ export const CreateChallengeForm: React.FC<CreateChallengeFormProps> = ({
 }) => {
   const [backgroundPreview, setBackgroundPreview] = useState<string | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+
+  const handleSubmit = async (values: any) => {
+    try {
+      const formData = new FormData();
+      
+      // Add required fields
+      formData.append('name', values.name);
+      formData.append('type', values.type);
+      formData.append('commitment_by', values.commitment_by);
+      formData.append('description', values.description);
+      formData.append('target_value', String(values.target_value));
+      formData.append('frequency', String(values.frequency));
+      
+      // Format date
+      const startDate = values.start_date instanceof Date ? 
+        values.start_date.toISOString().split('T')[0] : values.start_date;
+      formData.append('start_date', startDate);
+  
+      if (values.end_date) {
+        const endDate = values.end_date instanceof Date ?
+          values.end_date.toISOString().split('T')[0] : values.end_date;
+        formData.append('end_date', endDate);
+      }
+  
+      // Add files
+      if (values.background_image instanceof File) {
+        formData.append('background_image', values.background_image);
+      }
+      if (values.logo instanceof File) {
+        formData.append('logo', values.logo);
+      }
+  
+      await onSubmit(formData);
+      onClose();
+    } catch (error) {
+      console.error('Error in form submission:', error);
+    }
+  };
+
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -87,48 +102,7 @@ export const CreateChallengeForm: React.FC<CreateChallengeFormProps> = ({
       logo: null
     },
     validationSchema,
-    onSubmit: async (values) => {
-      try {
-        const formData = new FormData();
-        
-        // Add text fields
-        formData.append('name', values.name);
-        formData.append('type', values.type);
-        formData.append('commitment_by', values.commitment_by);
-        formData.append('description', values.description);
-        formData.append('target_value', String(values.target_value));
-        formData.append('frequency', String(values.frequency));
-        
-        // Format and add dates
-        const startDate = values.start_date instanceof Date ? 
-          values.start_date.toISOString().split('T')[0] : values.start_date;
-        formData.append('start_date', startDate);
-
-        if (values.end_date) {
-          const endDate = values.end_date instanceof Date ?
-            values.end_date.toISOString().split('T')[0] : values.end_date;
-          formData.append('end_date', endDate);
-        }
-
-        // Add files if present
-        if (values.background_image) {
-          formData.append('background_image', values.background_image);
-        }
-        if (values.logo) {
-          formData.append('logo', values.logo);
-        }
-
-        // Debug: Log FormData entries
-        for (let pair of formData.entries()) {
-          console.log(pair[0], pair[1]);
-        }
-
-        await createChallenge(formData);
-        onClose();
-      } catch (error) {
-        console.error('Error creating challenge:', error);
-      }
-    }
+    onSubmit: handleSubmit
   });
 
   const handleImageChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -260,13 +260,23 @@ export const CreateChallengeForm: React.FC<CreateChallengeFormProps> = ({
             <TextField
               fullWidth
               multiline
-              rows={4}
+              minRows={4}
+              maxRows={8}
               name="description"
               label="Description"
               value={formik.values.description}
               onChange={formik.handleChange}
               error={formik.touched.description && Boolean(formik.errors.description)}
               helperText={formik.touched.description && formik.errors.description}
+              sx={{
+                '& .MuiInputBase-root': {
+                  height: 'auto', // Allow height to grow
+                  overflow: 'auto' // Add scrollbar when needed
+                },
+                '& .MuiOutlinedInput-root': {
+                  height: 'auto' // Allow outline to grow with content
+                }
+              }}
             />
 
             <TextField

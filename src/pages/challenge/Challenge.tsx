@@ -129,14 +129,22 @@ export const ChallengesPage: React.FC = () => {
         </Box>
       ) : (
         <>
-          <Box sx={{ overflowX: 'auto', pb: 2 }}> {/* Container for horizontal scroll */}
+          <Box
+            sx={{
+              width: '100%',
+              maxWidth: '1200px', // Maximum width of container
+              margin: '0 auto', // Center container
+              px: { xs: 2, sm: 3, md: 4 }, // Responsive padding
+            }}
+          >
             <Grid 
               container 
               spacing={3}
               sx={{
-                flexWrap: 'nowrap', // Prevent wrapping to next line
-                width: 'max-content', // Allow container to grow based on content
-                mb: -2, // Offset bottom padding from scroll container
+                display: 'flex',
+                justifyContent: 'flex-start',
+                margin: '0 auto', // Remove default Grid margin
+                width: '100%',
               }}
             >
               {data.results.map((challenge) => (
@@ -144,8 +152,8 @@ export const ChallengesPage: React.FC = () => {
                   item 
                   key={challenge.id}
                   sx={{
-                    width: '320px', // Fixed width for each card
-                    flexShrink: 0, // Prevent items from shrinking
+                    width: '300px',
+                    flexShrink: 0,
                   }}
                 >
                   <ChallengeCard

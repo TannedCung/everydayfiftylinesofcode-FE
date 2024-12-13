@@ -6,14 +6,17 @@ import { Experimental_CssVarsProvider as CssVarsProvider } from '@mui/material/s
 import { theme } from './theme/customizations/index';
 import { LocalizationProvider } from '@mui/x-date-pickers-pro';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { SnackbarProvider } from './component/Snackbar/SnackbarProvider';
 
 function App() {
   return (
     <Router>
       <CssVarsProvider theme={theme} defaultMode="system">
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <AppRouter />
-        </LocalizationProvider>
+        <SnackbarProvider>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <AppRouter />
+          </LocalizationProvider>
+        </SnackbarProvider>
       </CssVarsProvider>
     </Router>
   );

@@ -21,7 +21,7 @@ import { DatePicker } from '@mui/x-date-pickers';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
-import axiosInstance from '../services/axiosInstance';
+import { useSnackbar } from '../hooks/useSnackbar';
 
 interface CreateChallengeFormProps {
   open: boolean;
@@ -49,6 +49,7 @@ export const CreateChallengeForm: React.FC<CreateChallengeFormProps> = ({
 }) => {
   const [backgroundPreview, setBackgroundPreview] = useState<string | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const { triggerSnackbar } = useSnackbar();
 
   const handleSubmit = async (values: any) => {
     try {
@@ -82,9 +83,11 @@ export const CreateChallengeForm: React.FC<CreateChallengeFormProps> = ({
       }
   
       await onSubmit(formData);
+      triggerSnackbar('Challenge created successfully!', 'success');
       onClose();
     } catch (error) {
       console.error('Error in form submission:', error);
+      triggerSnackbar('Failed to create challenge. Please try again.', 'error');
     }
   };
 
@@ -102,12 +105,25 @@ export const CreateChallengeForm: React.FC<CreateChallengeFormProps> = ({
       logo: null
     },
     validationSchema,
-    onSubmit: handleSubmit
+    onSubmit: handleSubmit,
+    validate: (values) => {
+      try {
+        validationSchema.validateSync(values, { abortEarly: false });
+      } catch (err) {
+        if (err instanceof yup.ValidationError) {
+          triggerSnackbar('Please check the form for errors', 'warning');
+        }
+      }
+    }
   });
 
   const handleImageChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      if (file.size > 5000000) { // 5MB limit
+        triggerSnackbar('Image file is too large. Please select a smaller file.', 'error');
+        return;
+      }
       formik.setFieldValue(field, file);
       const reader = new FileReader();
       reader.onloadend = () => {

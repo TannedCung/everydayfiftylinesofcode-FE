@@ -12,12 +12,20 @@ export interface Challenge {
   challenge: number;
   start_date: string;
   progress: number;
-  progress_detail: ProgressDetail[];
+  progress_detail: ProgressDetail[] | Record<string, never>;
   highest_streak: number;
 }
 
+interface PaginatedResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Challenge[];
+}
+
 export function useFetchChallenge() {
-  const [challenges, setChallenges] = useState<Challenge[]>([]); // Stores all challenges from the BE
+  const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const [totalCount, setTotalCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,14 +33,15 @@ export function useFetchChallenge() {
     const fetchChallenges = async () => {
       try {
         setLoading(true);
-        const response = await axiosInstance.get<Challenge[]>('/api/user_challenges'); // API returns an array of Challenge
-        const data = response.data;
+        const response = await axiosInstance.get<PaginatedResponse>('/api/user_challenges');
+        const { results, count } = response.data;
 
-        if (!Array.isArray(data) || data.length === 0) {
+        if (!Array.isArray(results) || results.length === 0) {
           throw new Error('No challenge data available');
         }
 
-        setChallenges(data);
+        setChallenges(results);
+        setTotalCount(count);
       } catch (err: any) {
         setError(err.message || 'An error occurred while fetching challenge data');
       } finally {
@@ -43,5 +52,5 @@ export function useFetchChallenge() {
     fetchChallenges();
   }, []);
 
-  return { challenges, loading, error };
+  return { challenges, totalCount, loading, error };
 }

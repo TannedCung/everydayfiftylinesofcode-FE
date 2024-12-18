@@ -10,13 +10,30 @@ export interface UserChallenge {
   progress: number;
   progress_detail: Record<string, any>;
 }
+interface PaginatedUserChallenges {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: UserChallenge[];
+}
 
-export const fetchUserChallenges = async (): Promise<UserChallenge[]> => {
+export const fetchUserChallenges = async (challenge_id?: number): Promise<PaginatedUserChallenges> => {
   try {
-    const response = await axiosInstance.get('/api/user_challenges/');
+    const params = challenge_id ? { challenge_id } : {};
+    const response = await axiosInstance.get('/api/user_challenges/', { params });
     return response.data;
   } catch (error) {
     console.error('Error fetching user challenges:', error);
+    throw error;
+  }
+};
+
+export const fetchUserChallenge = async (id: number): Promise<UserChallenge> => {
+  try {
+    const response = await axiosInstance.get(`/api/user_challenges/${id}/`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user challenge:', error);
     throw error;
   }
 };

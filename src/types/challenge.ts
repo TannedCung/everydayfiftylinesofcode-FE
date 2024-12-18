@@ -11,7 +11,6 @@ export interface Challenge {
     end_date: string;
     background_image?: string;
     logo?: string;
-    isJoined?: boolean;
   }
 
 export interface UserInfo {

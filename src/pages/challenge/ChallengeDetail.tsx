@@ -18,7 +18,7 @@ import {
   CategoryRounded,
   DateRange 
 } from '@mui/icons-material';
-
+import { fetchUserChallenges } from '../../services/userChallengeService';
 
 const getChallengeGoalText = (challenge: Challenge): string => {
   const getDurationText = () => {
@@ -62,6 +62,7 @@ export const ChallengeDetail: React.FC = () => {
   const [challenge, setChallenge] = useState<Challenge | null>(null);
   const [loading, setLoading] = useState(true);
   const { users, loading: usersLoading } = useChallengeUsers(Number(id));
+  const [isJoined, setIsJoined] = useState<boolean>(false);
 
   console.log(challenge);
   console.log(id);
@@ -78,6 +79,20 @@ export const ChallengeDetail: React.FC = () => {
       }
     };
     loadChallenge();
+    
+    const checkJoinStatus = async () => {
+      try {
+        const response = await fetchUserChallenges(Number(id));
+        const hasJoined = response.count > 0 || (Array.isArray(response.results) && response.results.length > 0);
+        setIsJoined(hasJoined);
+      } catch (error: any) {
+        if (error.response?.status === 404) {
+          setIsJoined(false);
+        }
+      }
+    };
+    
+    checkJoinStatus();
   }, [id]);
 
   const handleJoinChallenge = async () => {
@@ -187,7 +202,7 @@ export const ChallengeDetail: React.FC = () => {
           {/* Right Column - Actions */}
           <Grid item xs={12} md={4}>
             <Stack spacing={2}>
-              {challenge.isJoined ? (
+              {isJoined ? (
                 <Tooltip title="Leave Challenge" arrow>
                   <Button
                     variant="outlined"

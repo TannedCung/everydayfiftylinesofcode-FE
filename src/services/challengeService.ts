@@ -10,19 +10,6 @@ interface PaginatedResponse<T> {
   results: T[];
 }
 
-interface CreateChallengeData {
-  name: string;
-  type: 'commits' | 'lines_of_code';
-  commitment_by: 'daily' | 'accumulate';
-  description: string;
-  target_value: number;
-  frequency: number;
-  start_date: string;
-  end_date?: string | null;
-  background_image?: File;
-  logo?: File;
-}
-
 export const fetchChallenges = async (
   myChallenges?: boolean,
   page: number = 1

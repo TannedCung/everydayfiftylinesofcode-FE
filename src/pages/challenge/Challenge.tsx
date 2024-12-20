@@ -1,13 +1,15 @@
 // Challenge.tsx
 import React, { useEffect, useState } from 'react';
 import { Grid, Typography, Box, CircularProgress, Alert, Container, Pagination } from '@mui/material';
-import { fetchChallenges, createChallenge } from '../../services/challengeService';
+import { fetchChallenges, createChallenge, joinChallenge } from '../../services/challengeService';
 import { Challenge } from '../../types/challenge';
 import { styled } from '@mui/material/styles';
 import { ChallengeCard } from '../../component/ChallengeCard';
 import { Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { CreateChallengeForm } from '../../component/CreateChallengeForm';
+import { useSnackbar } from '../../hooks/useSnackbar';
+import { useNavigate } from 'react-router-dom';
 
 interface PaginatedResponse {
   count: number;
@@ -29,6 +31,10 @@ const Header = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(3),
 }));
 export const ChallengesPage: React.FC = () => {
+
+  const { triggerSnackbar } = useSnackbar();
+  const navigate = useNavigate();
+
   const [myChallenges, setMyChallenges] = useState<ChallengeState>({
     results: [],
     count: 0,
@@ -72,6 +78,16 @@ export const ChallengesPage: React.FC = () => {
   };
 
   const [openCreateForm, setOpenCreateForm] = useState(false);
+
+  const handleJoinChallenge = async (challengeId: number) => {
+    try {
+      await joinChallenge(challengeId);
+      triggerSnackbar('Successfully joined challenge!', 'success');
+      navigate(`/challenges/${challengeId}`);
+    } catch (error) {
+      triggerSnackbar('Failed to join challenge', 'error');
+    }
+  };
 
   const handleCreateChallenge = async (values: any) => {
     try {
@@ -159,7 +175,7 @@ export const ChallengesPage: React.FC = () => {
                   <ChallengeCard
                     challenge={challenge}
                     isJoined={title === 'Your challenges'}
-                    onJoin={() => {}}
+                    onJoin={handleJoinChallenge}
                   />
                 </Grid>
               ))}

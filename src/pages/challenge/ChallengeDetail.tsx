@@ -18,7 +18,7 @@ import {
   CategoryRounded,
   DateRange 
 } from '@mui/icons-material';
-import { fetchUserChallenges } from '../../services/userChallengeService';
+import { fetchUserChallenges, leaveChallenge } from '../../services/userChallengeService';
 
 const getChallengeGoalText = (challenge: Challenge): string => {
   const getDurationText = () => {
@@ -94,6 +94,28 @@ export const ChallengeDetail: React.FC = () => {
     
     checkJoinStatus();
   }, [id]);
+
+  const handleChallengeAction = async () => {
+    try {
+      if (isJoined) {
+        // Get the user challenge ID first
+        const response = await fetchUserChallenges(Number(id));
+        if (response.results.length > 0) {
+          const userChallengeId = response.results[0].id;
+          await leaveChallenge(userChallengeId);
+          setIsJoined(false);
+          triggerSnackbar('Successfully left challenge!', 'success');
+        }
+      } else {
+        await joinChallenge(Number(id));
+        setIsJoined(true);
+        triggerSnackbar('Successfully joined challenge!', 'success');
+      }
+      navigate('/dashboard');
+    } catch (error) {
+      triggerSnackbar(`Failed to ${isJoined ? 'leave' : 'join'} challenge`, 'error');
+    }
+  };
 
   const handleJoinChallenge = async () => {
     try {
@@ -208,7 +230,7 @@ export const ChallengeDetail: React.FC = () => {
                     variant="outlined"
                     color="primary"
                     size="large"
-                    onClick={handleJoinChallenge}
+                    onClick={handleChallengeAction}
                     sx={{
                       '&:hover': {
                         backgroundColor: 'error.main',

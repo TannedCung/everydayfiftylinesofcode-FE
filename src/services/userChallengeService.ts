@@ -49,3 +49,12 @@ export const joinChallenge = async (challengeId: number): Promise<UserChallenge>
     throw error;
   }
 };
+
+export const leaveChallenge = async (challengeId: number): Promise<void> => {
+  try {
+    await axiosInstance.delete(`/api/user_challenges/${challengeId}/`);
+  } catch (error) {
+    console.error('Error leaving challenge:', error);
+    throw error;
+  }
+};

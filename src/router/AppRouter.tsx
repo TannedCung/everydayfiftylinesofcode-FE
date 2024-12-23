@@ -7,6 +7,7 @@ import ProtectedRoute from './ProtectedRoute';
 import { ChallengesPage } from '../pages/challenge/Challenge';
 import MainLayout from '../layouts/MainLayout';
 import { ChallengeDetail } from '../pages/challenge/ChallengeDetail';
+import { ClubPage } from '../pages/club/ClubPage';
 
 const AppRouter: React.FC = () => {
   return (
@@ -18,6 +19,8 @@ const AppRouter: React.FC = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/challenges" element={<ChallengesPage />} />
           <Route path="/challenges/:id" element={<ChallengeDetail />} />
+          <Route path="/clubs/" element={<ClubPage />} />
+
         </Route>
       </Route>
     </Routes>

@@ -24,7 +24,7 @@ interface MenuItem {
 const mainListItems: MenuItem[] = [
   { text: 'Dashboard', icon: <HomeRoundedIcon />, path: '/dashboard' },
   { text: 'Challenges', icon: <AnalyticsRoundedIcon />, path: '/challenges' },
-  { text: 'Clubs', icon: <PeopleRoundedIcon />, path: '/statistics' },
+  { text: 'Clubs', icon: <PeopleRoundedIcon />, path: '/clubs' },
 ];
 
 const secondaryListItems: MenuItem[] = [

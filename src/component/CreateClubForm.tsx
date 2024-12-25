@@ -74,60 +74,101 @@ export const CreateClubForm: React.FC<CreateClubFormProps> = ({ open, onClose, o
       <form onSubmit={formik.handleSubmit}>
         <DialogContent>
           <Stack spacing={3}>
-            <Box display="flex" justifyContent="center" gap={2}>
-              <Box textAlign="center">
-                <input
-                  accept="image/*"
-                  type="file"
-                  id="avatar-upload"
-                  hidden
-                  onChange={(e) => handleImageChange(e, 'avatar')}
-                />
-                <label htmlFor="avatar-upload">
-                  <IconButton component="span">
-                    {avatarPreview ? (
-                      <Avatar
-                        src={avatarPreview}
-                        sx={{ width: 80, height: 80 }}
-                      />
-                    ) : (
-                      <Avatar sx={{ width: 80, height: 80 }}>
-                        <AddPhotoAlternateIcon />
-                      </Avatar>
-                    )}
-                  </IconButton>
-                </label>
-                <Typography variant="caption">Club Avatar</Typography>
-              </Box>
-
-              <Box textAlign="center">
-                <input
-                  accept="image/*"
-                  type="file"
-                  id="background-upload"
-                  hidden
-                  onChange={(e) => handleImageChange(e, 'background_image')}
-                />
-                <label htmlFor="background-upload">
-                  <IconButton component="span">
+            <Box>
+              <Typography variant="subtitle1" gutterBottom>
+                Background Image
+              </Typography>
+              <Box 
+                sx={{ 
+                  width: '100%', 
+                  height: 200, 
+                  border: '1px dashed grey',
+                  borderRadius: 1,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  mb: 3
+                }}
+              >
+                {backgroundPreview ? (
+                  <>
                     <Box
-                      sx={{
-                        width: 160,
-                        height: 80,
-                        border: '1px dashed grey',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundImage: backgroundPreview ? `url(${backgroundPreview})` : 'none',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                      }}
+                      component="img"
+                      src={backgroundPreview}
+                      sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                    <IconButton
+                      sx={{ position: 'absolute', right: 8, top: 8, backgroundColor: 'rgba(255,255,255,0.8)' }}
+                      component="label"
                     >
-                      {!backgroundPreview && <AddPhotoAlternateIcon />}
-                    </Box>
+                      <AddPhotoAlternateIcon />
+                      <input
+                        type="file"
+                        hidden
+                        accept="image/*"
+                        onChange={(e) => handleImageChange(e, 'background_image')}
+                      />
+                    </IconButton>
+                  </>
+                ) : (
+                  <IconButton component="label">
+                    <AddPhotoAlternateIcon />
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*"
+                      onChange={(e) => handleImageChange(e, 'background_image')}
+                    />
                   </IconButton>
-                </label>
-                <Typography variant="caption">Background Image</Typography>
+                )}
+              </Box>
+            </Box>
+        
+            {/* Avatar below */}
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 3 }}>
+              <Typography variant="subtitle1" gutterBottom align="center">
+                Club Avatar
+              </Typography>
+              <Box sx={{ position: 'relative' }}>
+                {avatarPreview ? (
+                  <Avatar
+                    src={avatarPreview}
+                    sx={{ 
+                      width: 100, 
+                      height: 100,
+                      border: '2px dashed grey',
+                      cursor: 'pointer'
+                    }}
+                    component="label"
+                  >
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*"
+                      onChange={(e) => handleImageChange(e, 'avatar')}
+                    />
+                  </Avatar>
+                ) : (
+                  <Avatar
+                    sx={{ 
+                      width: 100, 
+                      height: 100,
+                      border: '2px dashed grey',
+                      cursor: 'pointer'
+                    }}
+                    component="label"
+                  >
+                    <AddPhotoAlternateIcon sx={{ fontSize: 40 }} />
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*"
+                      onChange={(e) => handleImageChange(e, 'avatar')}
+                    />
+                  </Avatar>
+                )}
               </Box>
             </Box>
 

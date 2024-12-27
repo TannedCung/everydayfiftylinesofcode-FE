@@ -9,8 +9,13 @@ interface PaginatedResponse<T> {
   results: T[];
 }
 
-export const fetchClubs = async (): Promise<PaginatedResponse<Club>> => {
-  const response = await axiosInstance.get('/api/club/');
+export const fetchClubs = async (myClubs?: boolean, page: number = 1): Promise<PaginatedResponse<Club>> => {
+  const response = await axiosInstance.get('/api/club/', {
+    params: {
+      my_clubs: myClubs,
+      page
+    }
+  });
   return response.data;
 };
 

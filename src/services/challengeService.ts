@@ -1,8 +1,6 @@
-// src/services/challengeService.ts
 import axiosInstance from './axiosInstance';
 import { Challenge } from '../types/challenge';
 
-// src/services/challengeService.ts
 interface PaginatedResponse<T> {
   count: number;
   next: string | null;
@@ -22,6 +20,7 @@ export const fetchChallenges = async (
   });
   return response.data;
 };
+
 export const joinChallenge = async (challengeId: number) => {
   const response = await axiosInstance.post('/api/user_challenges/', {
     challenge: challengeId

@@ -125,7 +125,13 @@ export const ClubPage: React.FC = () => {
           <CircularProgress />
         </Box>
       ) : (
-        <>
+        <Box
+          sx={{
+            width: '100%',
+            maxWidth: '1200px', // Maximum width of container
+            margin: '0 auto', // Center container
+            px: { xs: 2, sm: 3, md: 4 }, // Responsive padding
+        }}>
           <Grid container spacing={3}>
             {data.results.map((club) => (
               <Grid item key={club.id} xs={12} sm={6} md={4}>
@@ -147,7 +153,7 @@ export const ClubPage: React.FC = () => {
               />
             </Box>
           )}
-        </>
+        </Box>
       )}
     </Box>
   );

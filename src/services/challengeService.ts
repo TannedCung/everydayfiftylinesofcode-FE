@@ -22,8 +22,7 @@ export const fetchChallenges = async (
 };
 
 export const joinChallenge = async (challengeId: number) => {
-  const response = await axiosInstance.post('/api/user_challenges/', {
-    challenge: challengeId
+  const response = await axiosInstance.post(`/api/challenge/${challengeId}/join/`, {
   });
   return response.data;
 };

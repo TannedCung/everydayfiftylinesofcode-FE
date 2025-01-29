@@ -80,8 +80,8 @@ export const ChallengeDetail: React.FC = () => {
     const checkJoinStatus = async () => {
       try {
         const response = await fetchUserChallenges(Number(id));
-        const hasJoined = response.count > 0 || (Array.isArray(response.results) && response.results.length > 0);
-        setIsJoined(hasJoined);
+        // const hasJoined = response.count > 0 || (Array.isArray(response.results) && response.results.length > 0);
+        setIsJoined(true);
       } catch (error: any) {
         if (error.response?.status === 404) {
           setIsJoined(false);

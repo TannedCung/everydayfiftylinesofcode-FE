@@ -64,9 +64,6 @@ export const ChallengeDetail: React.FC = () => {
   const { users, loading: usersLoading } = useChallengeUsers(Number(id));
   const [isJoined, setIsJoined] = useState<boolean>(false);
 
-  console.log(challenge);
-  console.log(id);
-
   useEffect(() => {
     const loadChallenge = async () => {
       try {

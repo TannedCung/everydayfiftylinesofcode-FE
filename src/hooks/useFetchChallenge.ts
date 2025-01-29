@@ -33,7 +33,7 @@ export function useFetchChallenge() {
     const fetchChallenges = async () => {
       try {
         setLoading(true);
-        const response = await axiosInstance.get<PaginatedResponse>('/api/user_challenges');
+        const response = await axiosInstance.get<PaginatedResponse>('/api/challenge/my-participated/');
         const { results, count } = response.data;
 
         if (!Array.isArray(results) || results.length === 0) {

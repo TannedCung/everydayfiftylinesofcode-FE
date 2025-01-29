@@ -19,8 +19,7 @@ interface PaginatedUserChallenges {
 
 export const fetchUserChallenges = async (challenge_id?: number): Promise<PaginatedUserChallenges> => {
   try {
-    const params = challenge_id ? { challenge_id } : {};
-    const response = await axiosInstance.get('/api/user_challenges/', { params });
+    const response = await axiosInstance.get(`/api/challenge/${challenge_id}/member-stats/`);
     return response.data;
   } catch (error) {
     console.error('Error fetching user challenges:', error);
@@ -30,7 +29,7 @@ export const fetchUserChallenges = async (challenge_id?: number): Promise<Pagina
 
 export const fetchUserChallenge = async (id: number): Promise<UserChallenge> => {
   try {
-    const response = await axiosInstance.get(`/api/user_challenges/${id}/`);
+    const response = await axiosInstance.get(`/api/challenge/${id}/member-stats/`);
     return response.data;
   } catch (error) {
     console.error('Error fetching user challenge:', error);
@@ -38,21 +37,9 @@ export const fetchUserChallenge = async (id: number): Promise<UserChallenge> => 
   }
 };
 
-export const joinChallenge = async (challengeId: number): Promise<UserChallenge> => {
-  try {
-    const response = await axiosInstance.post('/api/user_challenges/', {
-      challenge: challengeId,
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error joining challenge:', error);
-    throw error;
-  }
-};
-
 export const leaveChallenge = async (challengeId: number): Promise<void> => {
   try {
-    await axiosInstance.delete(`/api/user_challenges/${challengeId}/`);
+    await axiosInstance.delete(`/api/challenge/${challengeId}/leave/`);
   } catch (error) {
     console.error('Error leaving challenge:', error);
     throw error;

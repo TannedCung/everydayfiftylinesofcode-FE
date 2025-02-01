@@ -39,7 +39,7 @@ export const fetchUserChallenge = async (id: number): Promise<UserChallenge> => 
 
 export const leaveChallenge = async (challengeId: number): Promise<void> => {
   try {
-    await axiosInstance.delete(`/api/challenge/${challengeId}/leave/`);
+    await axiosInstance.post(`/api/challenge/${challengeId}/leave/`);
   } catch (error) {
     console.error('Error leaving challenge:', error);
     throw error;

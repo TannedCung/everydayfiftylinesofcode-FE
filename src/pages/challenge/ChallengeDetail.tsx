@@ -64,7 +64,7 @@ export const ChallengeDetail: React.FC = () => {
   const { users, loading: usersLoading } = useChallengeUsers(Number(id));
   const [isJoined, setIsJoined] = useState<boolean>(false);
 
-  useEffect(() => {
+  useEffect(() => {  
     const loadChallenge = async () => {
       try {
         const data = await fetchChallenge(Number(id));
@@ -95,14 +95,14 @@ export const ChallengeDetail: React.FC = () => {
   const handleChallengeAction = async () => {
     try {
       if (isJoined) {
-        // Get the user challenge ID first
-        const response = await fetchUserChallenges(Number(id));
-        if (response.results.length > 0) {
-          const userChallengeId = response.results[0].id;
-          await leaveChallenge(userChallengeId);
-          setIsJoined(false);
-          triggerSnackbar('Successfully left challenge!', 'success');
-        }
+        // // Get the user challenge ID first
+        // const response = await fetchUserChallenges(Number(id));
+        // if (response.results.length > 0) {
+        //   const userChallengeId = response.results[0].id;
+        await leaveChallenge(Number(id));
+        setIsJoined(false);
+        triggerSnackbar('Successfully left challenge!', 'success');
+        // }
       } else {
         await joinChallenge(Number(id));
         setIsJoined(true);

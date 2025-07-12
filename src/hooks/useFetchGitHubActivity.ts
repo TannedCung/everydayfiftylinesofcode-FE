@@ -20,7 +20,7 @@ export async function fetchGitHubActivity(startDate: string, endDate: string) {
     const contributionCalendar = data.data.user.contributionsCollection.contributionCalendar;
 
     // Flatten weeks and contributionDays into a single array of activities
-    const activityStats = contributionCalendar.weeks.flatMap((week) => 
+    const activityStats = contributionCalendar.weeks.flatMap((week: any) => 
       week.contributionDays.map((day: { date: any; contributionCount: any; }) => ({
         date: day.date,  // Date in YYYY-MM-DD format
         count: day.contributionCount,  // Number of commits for the date

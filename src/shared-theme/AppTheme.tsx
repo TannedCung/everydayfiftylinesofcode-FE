@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useMemo } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import type { ThemeOptions } from '@mui/material/styles';
 import { inputsCustomizations } from './customizations/inputs';
@@ -22,7 +22,7 @@ export default function AppTheme({
   disableCustomTheme,
   themeComponents,
 }: AppThemeProps) {
-  const theme = React.useMemo(() => {
+  const theme = useMemo(() => {
     return disableCustomTheme
       ? {}
       : createTheme({
@@ -46,7 +46,7 @@ export default function AppTheme({
         });
   }, [disableCustomTheme, themeComponents]);
   if (disableCustomTheme) {
-    return <React.Fragment>{children}</React.Fragment>;
+    return <>{children}</>;
   }
   return (
     <ThemeProvider theme={theme}>

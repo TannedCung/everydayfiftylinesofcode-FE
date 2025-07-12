@@ -1,4 +1,3 @@
-import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 
 // Simulating an auth check (replace this with actual authentication logic)

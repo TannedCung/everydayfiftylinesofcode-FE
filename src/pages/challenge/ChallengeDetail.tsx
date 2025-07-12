@@ -79,7 +79,7 @@ export const ChallengeDetail: React.FC = () => {
     
     const checkJoinStatus = async () => {
       try {
-        const response = await fetchUserChallenges(Number(id));
+        await fetchUserChallenges(Number(id));
         // const hasJoined = response.count > 0 || (Array.isArray(response.results) && response.results.length > 0);
         setIsJoined(true);
       } catch (error: any) {

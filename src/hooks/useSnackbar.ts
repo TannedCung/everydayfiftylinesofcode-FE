@@ -1,5 +1,5 @@
 import React, { createContext } from "react";
-import { SnackbarOptions, SnackbarStatus } from "../types/snackbar";
+import { SnackbarStatus } from "../types/snackbar";
 
 interface SnackbarContextType {
   showSnackbar: (options: { message: string; status: SnackbarStatus }) => void;

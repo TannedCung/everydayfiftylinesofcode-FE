@@ -1,6 +1,11 @@
-import React from 'react';
 import { Snackbar as MuiSnackbar, SnackbarContent } from '@mui/material';
-import { SnackbarProps } from './types';
+
+interface SnackbarProps {
+  message: string;
+  status: 'success' | 'error' | 'info' | 'warning';
+  open: boolean;
+  onClose: () => void;
+}
 
 const Snackbar: React.FC<SnackbarProps> = ({ message, status, open, onClose }) => {
   const getBackgroundColor = () => {

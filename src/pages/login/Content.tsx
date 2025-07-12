@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Typography, Box } from '@mui/material';
 
 const Content: React.FC = () => (

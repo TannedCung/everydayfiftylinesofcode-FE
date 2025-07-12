@@ -1,6 +1,5 @@
 // src/components/ClubCard.tsx
-import React from 'react';
-import { Card, CardContent, CardMedia, Typography, Button, Box } from '@mui/material';
+import { Card, CardContent, CardMedia, Typography } from '@mui/material';
 import { Club } from '../types/club';
 import { useNavigate } from 'react-router-dom';
 

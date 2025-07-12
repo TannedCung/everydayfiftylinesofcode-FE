@@ -1,5 +1,4 @@
 // src/components/ChallengeCard.tsx
-import React from 'react';
 import {
   Card,
   CardContent,

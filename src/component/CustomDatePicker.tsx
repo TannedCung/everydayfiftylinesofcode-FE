@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import Button from '@mui/material/Button';
 import CalendarTodayRoundedIcon from '@mui/icons-material/CalendarTodayRounded';
@@ -21,7 +21,7 @@ interface ButtonFieldProps
       false,
       DateValidationError
     > {
-  setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpen?: (value: boolean | ((prev: boolean) => boolean)) => void;
 }
 
 function ButtonField(props: ButtonFieldProps) {
@@ -52,8 +52,8 @@ function ButtonField(props: ButtonFieldProps) {
 }
 
 export default function CustomDatePicker() {
-  const [value, setValue] = React.useState<Dayjs | null>(dayjs());
-  const [open, setOpen] = React.useState(false);
+  const [value, setValue] = useState<Dayjs | null>(dayjs());
+  const [open, setOpen] = useState(false);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>

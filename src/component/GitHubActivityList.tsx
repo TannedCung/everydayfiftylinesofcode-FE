@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTheme } from '@mui/material/styles';
 import CalendarHeatmap from 'react-calendar-heatmap';
 import { Tooltip as ReactTooltip } from 'react-tooltip';
@@ -50,20 +49,14 @@ export const GitHubActivityList: React.FC<GitHubActivityListProps> = ({ stats })
           count: day.count,
         }))}
         // Attach tooltips to each cell
-        tooltipDataAttrs={(value: { date: string; count: number }) => {
-          if (!value || !value.date) {
-            return {
-              'data-tooltip-id': 'heatmap-tooltip',
-              'data-tooltip-content': 'No contributions',
-            };
-          }
-          return {
-            'data-tooltip-id': 'heatmap-tooltip',
-            'data-tooltip-content': `Date: ${value.date} - Commits: ${value.count || 0}`,
-          };
-        }}
+        tooltipDataAttrs={(value: any) => ({
+          'data-tooltip-id': 'heatmap-tooltip',
+          'data-tooltip-content': value && value.date 
+            ? `Date: ${value.date} - Commits: ${value.count || 0}`
+            : 'No contributions',
+        } as any)}
         showWeekdayLabels
-        classForValue={(value: { count: number | undefined }) => getCellColor(value?.count)}
+        classForValue={(value: any) => getCellColor(value?.count)}
       />
       <ReactTooltip id="heatmap-tooltip" /> {/* Render the tooltip */}
     </div>
